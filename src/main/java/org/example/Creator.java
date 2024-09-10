@@ -6,12 +6,15 @@ import com.smartsheet.api.SmartsheetFactory;
 import com.smartsheet.api.models.Attachment;
 import com.smartsheet.api.models.Cell;
 import com.smartsheet.api.models.Column;
+import com.smartsheet.api.models.Comment;
 import com.smartsheet.api.models.Discussion;
 import com.smartsheet.api.models.PagedResult;
 import com.smartsheet.api.models.Row;
 import com.smartsheet.api.models.Sheet;
+import com.smartsheet.api.models.enums.DiscussionInclusion;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,9 +55,12 @@ public class Creator {
             Goal goal = new Goal();
             goal.setTitle(row.getCells().get(theTitleColumn.getIndex()).getDisplayValue());
             goal.setDescription(row.getCells().get(theDescritionColumn.getIndex()).getDisplayValue());
-            PagedResult<Discussion> discussionPagedResult = smartsheet.sheetResources().rowResources().discussionResources().listDiscussions(sheetId, row.getId(), null, null);
+            EnumSet<DiscussionInclusion> includes = EnumSet.allOf(DiscussionInclusion.class);
+            PagedResult<Discussion> discussionPagedResult = smartsheet.sheetResources().rowResources().discussionResources().listDiscussions(sheetId, row.getId(), null, includes);
             for (Discussion discussion : discussionPagedResult.getData()) {
-               goal.addBullet(discussion.getTitle() + " " + discussion.getComment());
+               for (Comment comment : discussion.getComments()) {
+                  goal.addBullet(comment.getText());
+               }
             }
 
             PagedResult<Attachment> attachments = smartsheet.sheetResources().rowResources().attachmentResources().getAttachments(sheetId, row.getId(), null);
