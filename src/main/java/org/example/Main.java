@@ -3,7 +3,10 @@ package org.example;
 
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
@@ -16,34 +19,42 @@ public class Main {
       Frame frame = new Frame("QC Creator");
 
       JPanel container = new JPanel();
-      container.setLayout(new BorderLayout());
+      container.setLayout(new BorderLayout(5,5));
+      container.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-      Label tokenLabel = new Label("Smartsheet Authentication Token", Label.RIGHT);
-      TextField tokenTextField = createSettingstextField(settings.getToken());
+      JLabel tokenLabel = new JLabel("Smartsheet Authentication Token ", JLabel.RIGHT);
+      JTextField tokenTextField = createSettingsTextField(settings.getToken());
+      tokenTextField.setToolTipText("Use the token from the API integration properties within Smartsheet");
       JPanel tokenPanel = createSettingsPanel(tokenLabel, tokenTextField);
 
-      Label sheetNameLabel = new Label("Smartsheet Name", Label.RIGHT);
-      TextField sheetNameTextField = createSettingstextField(settings.getSmartsheetName());
+      JLabel sheetNameLabel = new JLabel("Smartsheet Name ", JLabel.RIGHT);
+      JTextField sheetNameTextField = createSettingsTextField(settings.getSmartsheetName());
+      sheetNameTextField.setToolTipText("Which smartsheet do you want to extract from");
       JPanel sheetPanel = createSettingsPanel(sheetNameLabel, sheetNameTextField);
 
-      Label sheetColumn = new Label("Smartsheet Column", Label.RIGHT);
-      TextField sheetColumnText = createSettingstextField(settings.getSmartsheetColumn());
+      JLabel sheetColumn = new JLabel("Smartsheet Column ", JLabel.RIGHT);
+      JTextField sheetColumnText = createSettingsTextField(settings.getSmartsheetColumn());
+      sheetColumnText.setToolTipText("Which smartsheet column do you want to filter data by and extract");
       JPanel sheetColumnPanel = createSettingsPanel(sheetColumn, sheetColumnText);
 
-      Label sheetColumnFilter = new Label("Smartsheet Column Filter", Label.RIGHT);
-      TextField sheetColumnFilterText = createSettingstextField(settings.getSmartsheetColumnFilter());
+      JLabel sheetColumnFilter = new JLabel("Smartsheet Column Filter ", JLabel.RIGHT);
+      JTextField sheetColumnFilterText = createSettingsTextField(settings.getSmartsheetColumnFilter());
+      sheetColumnFilterText.setToolTipText("Which value from the above column do you want to filter the data by");
       JPanel sheetColumnFilterPanel = createSettingsPanel(sheetColumnFilter, sheetColumnFilterText);
 
-      Label groupByColumn= new Label("Group By Column", Label.RIGHT);
-      TextField groupByColumnText = createSettingstextField(settings.getGroupByColumn());
+      JLabel groupByColumn= new JLabel("Group By Column ", JLabel.RIGHT);
+      JTextField groupByColumnText = createSettingsTextField(settings.getGroupByColumn());
+      groupByColumnText.setToolTipText("Which smartsheet column has the values you want to group the output by");
       JPanel groupByColumnPanel = createSettingsPanel(groupByColumn, groupByColumnText);
 
-      Label titleColumn= new Label("Title Column", Label.RIGHT);
-      TextField titleColumnText = createSettingstextField(settings.getTitleColumns());
+      JLabel titleColumn= new JLabel("Title Column ", JLabel.RIGHT);
+      JTextField titleColumnText = createSettingsTextField(settings.getTitleColumns());
+      titleColumnText.setToolTipText("Which smartsheet column has the title of the task");
       JPanel titleColumnPanel = createSettingsPanel(titleColumn, titleColumnText);
 
-      Label descriptionColumn= new Label("Description Column", Label.RIGHT);
-      TextField descriptionColumnText = createSettingstextField(settings.getDecriptionColumn());
+      JLabel descriptionColumn= new JLabel("Description Column ", JLabel.RIGHT);
+      JTextField descriptionColumnText = createSettingsTextField(settings.getDecriptionColumn());
+      descriptionColumnText.setToolTipText("Which smartsheet column has the description in it");
       JPanel descriptionColumnPanel = createSettingsPanel(descriptionColumn, descriptionColumnText);
 
       JPanel settingsPanel = new JPanel();
@@ -59,11 +70,14 @@ public class Main {
       JTextArea markdownArea = new JTextArea("content will appear here");
 
 
-      Button create = new Button("Create");
+      JButton create = new JButton("Create");
 
       JPanel actionPanel = new JPanel();
       actionPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
       actionPanel.add(create);
+
+      JButton copyText = new JButton("Copy Text");
+      copyText.setEnabled(false);
 
       container.add(settingsPanel, BorderLayout.NORTH);
       container.add(markdownArea, BorderLayout.CENTER);
@@ -79,11 +93,25 @@ public class Main {
             GoalPrinter printer = new GoalPrinter();
             StringBuilder print = printer.print(goals);
             markdownArea.setText(print.toString());
+            copyText.setEnabled(true);
          } catch (Exception ex) {
             throw new RuntimeException(ex);
          }
 
       });
+
+      copyText.addActionListener(e -> {
+
+         try {
+            StringSelection stringSelection = new StringSelection(markdownArea.getText());
+            Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
+            clpbrd.setContents (stringSelection, null);
+         } catch (Exception ex) {
+            throw new RuntimeException(ex);
+         }
+
+      });
+      actionPanel.add(copyText);
 
       // Handle window close event using WindowAdapter
 
@@ -108,13 +136,13 @@ public class Main {
 
    }
 
-   private static TextField createSettingstextField(String text) {
-      TextField tokenField = new TextField(text);
+   private static JTextField createSettingsTextField(String text) {
+      JTextField tokenField = new JTextField(text);
       tokenField.setColumns(30);
       return tokenField;
    }
 
-   private static JPanel createSettingsPanel(Label tokenLabel, TextField tokenField) {
+   private static JPanel createSettingsPanel(JLabel tokenLabel, JTextField tokenField) {
       JPanel tokenPanel = new JPanel();
       tokenPanel.setLayout(new GridLayout(1,2));
       tokenPanel.add(tokenLabel);
