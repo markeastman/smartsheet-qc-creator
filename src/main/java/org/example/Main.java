@@ -18,31 +18,31 @@ public class Main {
       JPanel container = new JPanel();
       container.setLayout(new BorderLayout());
 
-      Label tokenLabel = new Label("Smartsheet Authentication Token");
+      Label tokenLabel = new Label("Smartsheet Authentication Token", Label.RIGHT);
       TextField tokenTextField = createSettingstextField(settings.getToken());
       JPanel tokenPanel = createSettingsPanel(tokenLabel, tokenTextField);
 
-      Label sheetNameLabel = new Label("Smartsheet Name");
+      Label sheetNameLabel = new Label("Smartsheet Name", Label.RIGHT);
       TextField sheetNameTextField = createSettingstextField(settings.getSmartsheetName());
       JPanel sheetPanel = createSettingsPanel(sheetNameLabel, sheetNameTextField);
 
-      Label sheetColumn = new Label("Smartsheet Column");
+      Label sheetColumn = new Label("Smartsheet Column", Label.RIGHT);
       TextField sheetColumnText = createSettingstextField(settings.getSmartsheetColumn());
       JPanel sheetColumnPanel = createSettingsPanel(sheetColumn, sheetColumnText);
 
-      Label sheetColumnFilter = new Label("Smartsheet Column Filter");
+      Label sheetColumnFilter = new Label("Smartsheet Column Filter", Label.RIGHT);
       TextField sheetColumnFilterText = createSettingstextField(settings.getSmartsheetColumnFilter());
       JPanel sheetColumnFilterPanel = createSettingsPanel(sheetColumnFilter, sheetColumnFilterText);
 
-      Label groupByColumn= new Label("Group By Column");
+      Label groupByColumn= new Label("Group By Column", Label.RIGHT);
       TextField groupByColumnText = createSettingstextField(settings.getGroupByColumn());
       JPanel groupByColumnPanel = createSettingsPanel(groupByColumn, groupByColumnText);
 
-      Label titleColumn= new Label("Title Column");
+      Label titleColumn= new Label("Title Column", Label.RIGHT);
       TextField titleColumnText = createSettingstextField(settings.getTitleColumns());
       JPanel titleColumnPanel = createSettingsPanel(titleColumn, titleColumnText);
 
-      Label descriptionColumn= new Label("Description Column");
+      Label descriptionColumn= new Label("Description Column", Label.RIGHT);
       TextField descriptionColumnText = createSettingstextField(settings.getDecriptionColumn());
       JPanel descriptionColumnPanel = createSettingsPanel(descriptionColumn, descriptionColumnText);
 
@@ -116,7 +116,7 @@ public class Main {
 
    private static JPanel createSettingsPanel(Label tokenLabel, TextField tokenField) {
       JPanel tokenPanel = new JPanel();
-      tokenPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+      tokenPanel.setLayout(new GridLayout(1,2));
       tokenPanel.add(tokenLabel);
       tokenPanel.add(tokenField);
       return tokenPanel;
