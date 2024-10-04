@@ -7,16 +7,16 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.Map;
+
+import io.github.gitbucket.markedj.*;
 
 public class Main {
    public static void main(String[] args) throws Exception {
       Settings settings = new Settings();
       settings.loadProperties();
-      Frame frame = new Frame("QC Creator");
+      JFrame frame = new JFrame("QC Creator");
 
       JPanel container = new JPanel();
       container.setLayout(new BorderLayout(5,5));
@@ -67,7 +67,14 @@ public class Main {
       settingsPanel.add(titleColumnPanel);
       settingsPanel.add(descriptionColumnPanel);
 
-      JTextArea markdownArea = new JTextArea("content will appear here");
+
+      // With default options
+      JEditorPane formattedMarkdown = new JEditorPane();
+      formattedMarkdown.setContentType("text/html");
+      formattedMarkdown.setEditable(false);
+      JScrollPane scrollableText = new JScrollPane(formattedMarkdown, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS );
+
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
       JButton create = new JButton("Create");
@@ -80,7 +87,7 @@ public class Main {
       copyText.setEnabled(false);
 
       container.add(settingsPanel, BorderLayout.NORTH);
-      container.add(markdownArea, BorderLayout.CENTER);
+      container.add(scrollableText, BorderLayout.CENTER);
       container.add(actionPanel, BorderLayout.SOUTH);
       frame.add(container);
 
@@ -92,7 +99,8 @@ public class Main {
             Map<String, List<Goal>> goals = creator.create(tokenTextField.getText(), sheetNameTextField.getText(), sheetColumnText.getText(), sheetColumnFilterText.getText(), groupByColumnText.getText(), titleColumnText.getText(), descriptionColumnText.getText());
             GoalPrinter printer = new GoalPrinter();
             StringBuilder print = printer.print(goals);
-            markdownArea.setText(print.toString());
+            String formattedText = Marked.marked(print.toString());
+            formattedMarkdown.setText(formattedText);
             copyText.setEnabled(true);
          } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -103,9 +111,9 @@ public class Main {
       copyText.addActionListener(e -> {
 
          try {
-            StringSelection stringSelection = new StringSelection(markdownArea.getText());
-            Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
-            clpbrd.setContents (stringSelection, null);
+            StringSelection stringSelection = new StringSelection(formattedMarkdown.getText());
+            Clipboard clipboard = Toolkit.getDefaultToolkit ().getSystemClipboard ();
+            clipboard.setContents (stringSelection, null);
          } catch (Exception ex) {
             throw new RuntimeException(ex);
          }
@@ -113,27 +121,14 @@ public class Main {
       });
       actionPanel.add(copyText);
 
-      // Handle window close event using WindowAdapter
-
-      frame.addWindowListener(new WindowAdapter() {
-
-         public void windowClosing(WindowEvent e) {
-
-            System.exit(0);
-
-         }
-
-      });
+      // Set the frame to exit on close
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
       // Set frame size and make it visible
 
+      frame.setPreferredSize(new Dimension(900, 450));
       frame.pack();
-      frame.setSize(900, 450);
-
       frame.setVisible(true);
-
-
-
    }
 
    private static JTextField createSettingsTextField(String text) {
