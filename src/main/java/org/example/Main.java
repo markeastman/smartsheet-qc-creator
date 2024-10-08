@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,7 @@ public class Main {
       copyText.addActionListener(e -> {
 
          try {
-            StringSelection stringSelection = new StringSelection(formattedMarkdown.getText());
+            HtmlStringSelection stringSelection = new HtmlStringSelection(formattedMarkdown.getText());
             Clipboard clipboard = Toolkit.getDefaultToolkit ().getSystemClipboard ();
             clipboard.setContents (stringSelection, null);
          } catch (Exception ex) {
@@ -120,6 +121,21 @@ public class Main {
 
       });
       actionPanel.add(copyText);
+
+      JButton checkClpBrd = new JButton("Check Clipboard");
+      checkClpBrd.addActionListener(e -> {
+
+         try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit ().getSystemClipboard ();
+            DataFlavor[] flavors = clipboard.getAvailableDataFlavors();
+            for (int i = 0; i < flavors.length; i++)
+               System.out.println( "Data Flavor : " + flavors[i].toString() );
+         } catch (Exception ex) {
+            throw new RuntimeException(ex);
+         }
+
+      });
+      actionPanel.add(checkClpBrd);
 
       // Set the frame to exit on close
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
