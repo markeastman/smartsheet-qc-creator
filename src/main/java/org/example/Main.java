@@ -122,21 +122,6 @@ public class Main {
       });
       actionPanel.add(copyText);
 
-      JButton checkClpBrd = new JButton("Check Clipboard");
-      checkClpBrd.addActionListener(e -> {
-
-         try {
-            Clipboard clipboard = Toolkit.getDefaultToolkit ().getSystemClipboard ();
-            DataFlavor[] flavors = clipboard.getAvailableDataFlavors();
-            for (int i = 0; i < flavors.length; i++)
-               System.out.println( "Data Flavor : " + flavors[i].toString() );
-         } catch (Exception ex) {
-            throw new RuntimeException(ex);
-         }
-
-      });
-      actionPanel.add(checkClpBrd);
-
       // Set the frame to exit on close
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
