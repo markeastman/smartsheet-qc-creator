@@ -7,13 +7,13 @@ public class GoalPrinter {
    public StringBuilder print(Map<String, List<Goal>> goals) {
       StringBuilder builder = new StringBuilder();
       String separator = System.lineSeparator();
-      builder.append("# Quarterly Connection").append(separator).append(separator);
+      //builder.append("# Quarterly Connection").append(separator).append(separator);
       for (Map.Entry<String, List<Goal>> entry : goals.entrySet()) {
-         builder.append("## ").append(entry.getKey()).append(separator).append(separator);
+         builder.append("# ").append(entry.getKey()).append(separator).append(separator);
          List<Goal> goalsList = entry.getValue();
 
          for (Goal goal : goalsList) {
-            builder.append("### ").append(goal.getTitle()).append(separator).append(separator);
+            builder.append("## ").append(goal.getTitle()).append(separator).append(separator);
             builder.append(goal.getDescription()).append(separator);
             for (String bullet : goal.getBullets()) {
                builder.append("- ").append(bullet).append(separator);
